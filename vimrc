@@ -131,8 +131,6 @@ if filereadable($HOME . "/.vimrc.local")
   source ~/.vimrc.local
 endif
 
-set background=dark " cause I'm not a psychopath
-
 " set your colorscheme on ~/.vimrc.local
 if !exists('g:colors_name') || g:colors_name == 'default'
   try

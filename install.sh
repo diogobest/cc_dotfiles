@@ -24,6 +24,7 @@ then
       echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 
       sudo apt-get install -y silversearcher-ag \
+        playerctl \
         git \
         xclip \
         build-essential \
@@ -58,7 +59,7 @@ then
       return
       ;;
   esac
-  git clone --depth=10 https://github.com/campuscode/cc_dotfiles.git "$HOME/.cc_dotfiles"
+  git clone --depth=10 https://github.com/diogobest/cc_dotfiles.git "$HOME/.cc_dotfiles"
   cd "$HOME/.cc_dotfiles"
   rake install
 else

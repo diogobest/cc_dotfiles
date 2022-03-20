@@ -9,7 +9,8 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'lifepillar/vim-solarized8'
 Plug 'gruvbox-community/gruvbox' " default colorscheme
 Plug 'scrooloose/nerdtree' " file explorer
-Plug 'ctrlpvim/ctrlp.vim' " fuzzy finder
+Plug 'junegunn/fzf', { 'do': { -> fzf#install()  }  } " fuzzy finder
+Plug 'junegunn/fzf.vim' " fuzzy finder
 Plug 'pbrisbin/vim-mkdir' " create folder if it doesn't exist
 Plug 'scrooloose/syntastic' " syntax checking
 Plug 'thoughtbot/vim-rspec'
@@ -30,6 +31,8 @@ Plug 'rking/ag.vim'
 Plug 'godlygeek/tabular'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-repeat'
+Plug 'rust-lang/rust.vim'
+Plug 'elixir-editors/vim-elixir'
 
 if filereadable(expand("~/.plugins.vim.local"))
   source ~/.plugins.vim.local

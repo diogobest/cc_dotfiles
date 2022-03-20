@@ -1,3 +1,6 @@
+" Map fzf to ctrl+p
+nmap <C-P> :FZF<CR>
+
 " Switch between the last two files
 nnoremap <Leader><Leader> <c-^>
 
