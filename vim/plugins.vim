@@ -6,18 +6,16 @@ call plug#begin('~/.vim/bundle')
 
 " Define bundles via Github repos
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'lifepillar/vim-solarized8'
-Plug 'gruvbox-community/gruvbox' " default colorscheme
 Plug 'scrooloose/nerdtree' " file explorer
-Plug 'junegunn/fzf', { 'do': { -> fzf#install()  }  } " fuzzy finder
-Plug 'junegunn/fzf.vim' " fuzzy finder
+Plug 'junegunn/fzf', { 'do': { -> fzf#install()  }  }
+Plug 'junegunn/fzf.vim'
 Plug 'pbrisbin/vim-mkdir' " create folder if it doesn't exist
 Plug 'scrooloose/syntastic' " syntax checking
 Plug 'thoughtbot/vim-rspec'
 Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-git'
 Plug 'tpope/vim-rails'
+Plug 'tpope/vim-fugitive'
 Plug 'keith/rspec.vim'
 Plug 'tpope/vim-surround'
 Plug 'vim-ruby/vim-ruby'
@@ -31,8 +29,16 @@ Plug 'rking/ag.vim'
 Plug 'godlygeek/tabular'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-repeat'
-Plug 'rust-lang/rust.vim'
-Plug 'elixir-editors/vim-elixir'
+Plug 'NLKNguyen/papercolor-theme'  " default colorscheme
+Plug 'pangloss/vim-javascript'
+Plug 'maxmellon/vim-jsx-pretty'
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
+Plug 'ekalinin/Dockerfile.vim'
+Plug 'tpope/vim-markdown'
+Plug 'leafOfTree/vim-vue-plugin'
+Plug 'clojure-vim/clojure.vim'
+Plug 'hashivim/vim-terraform' " terraform
 
 if filereadable(expand("~/.plugins.vim.local"))
   source ~/.plugins.vim.local

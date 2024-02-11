@@ -1,2 +1,16 @@
-set background=light
-colorscheme PaperColor
+" set background=light
+set background=dark
+try
+  let g:PaperColor_Theme_Options = {
+        \   'theme': {
+        \     'default.dark': {
+        \       'override' : {
+        \         'color05' : ['#080808', '229'],
+        \         'color11' : ['#080808', '178'],
+        \       }
+        \     }
+        \   }
+        \ }
+  colorscheme PaperColor
+catch
+endtry

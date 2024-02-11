@@ -22,6 +22,7 @@ task :install do
   install_vim_plugins
   install_zsh_syntax_highlighting
   install_tmux_battery_plugin
+  install_tmux_ressurect
   tmux_copy_mode
   add_vimrc_local
   change_shell
@@ -66,6 +67,15 @@ def install_tmux_battery_plugin
     run_command %{ echo "run-shell $HOME/#{folder}/battery.tmux" >> $HOME/.tmux.conf.local }
   end
 end
+
+def install_tmux_ressurect
+  folder = 'tmux-ressurect'
+  unless File.exists?("#{ENV["HOME"]}/#{folder}")
+    run_command %{ git clone --depth=1 git://github.com/tmux-plugins/tmux-resurrect $HOME/#{folder} }
+    run_command %{ echo "run-shell $HOME/#{folder}/ressurect.tmux" >> $HOME/.tmux.conf.local }
+  end
+end
+
 
 def install_files(files)
   files.each do |f|

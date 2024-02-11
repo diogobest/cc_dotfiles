@@ -3,11 +3,6 @@
 ccdf=$HOME/.cc_dotfiles
 os_family=`echo $(uname) | tr '[:upper:]' '[:lower:]'`
 
-# vpn and audio player
-alias vpn="sudo openconnect vpn-link --protocol=anyconnect"
-alias next="playerctl next"
-alias previous="playerctl previous"
-
 # Show human friendly numbers and colors
 alias df='df -h'
 alias du='du -h -d 2'
@@ -29,32 +24,8 @@ alias :q='exit'
 # vimrc editing
 alias ve='vim $HOME/.vimrc'
 
-# zsh profile editing
-alias ze='vim $HOME/.zshrc'
-alias zr='source $HOME/.zshrc'
-alias zrl='source $HOME/.zshrc.local'
-
-# history
-alias hfull='history 1 -1'
-
 # Git Aliases
 alias gs='git status'
-
-# Common shell functions
-alias less='less -r'
-alias tf='tail -f'
-alias l='less'
-alias lh='ls -alt | head' # see the last modified files
-alias cl='clear'
-
-# Zippin
-alias gz='tar -zcvf'
-alias bz2="tar -jcvf"
-alias xgz='tar -zxvf'
-alias xbz2="tar -jxvf"
-
-# Rspec
-alias rs='rspec spec'
 
 if [[ $os_family == 'darwin' ]]
 then
