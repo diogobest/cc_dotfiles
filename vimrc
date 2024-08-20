@@ -43,6 +43,7 @@ set diffopt+=vertical " Always use vertical diffs
 set splitbelow " Open new split panes to right and bottom,
 set splitright " which feels more natural
 set spelllang=en_us,pt_br " we're trying to be bilingual
+set foldmethod=indent
 
 " Load plugins
 so ~/.vim/plugins.vim

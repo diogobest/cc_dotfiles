@@ -26,19 +26,19 @@ Plug 'vim-airline/vim-airline' " Pretty status bar
 Plug 'vim-airline/vim-airline-themes'
 Plug 'christoomey/vim-tmux-runner'
 Plug 'rking/ag.vim'
-Plug 'godlygeek/tabular'
+" Plug 'godlygeek/tabular'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-repeat'
 Plug 'NLKNguyen/papercolor-theme'  " default colorscheme
-Plug 'pangloss/vim-javascript'
-Plug 'maxmellon/vim-jsx-pretty'
-Plug 'leafgarland/typescript-vim'
-Plug 'peitalin/vim-jsx-typescript'
-Plug 'ekalinin/Dockerfile.vim'
-Plug 'tpope/vim-markdown'
-Plug 'leafOfTree/vim-vue-plugin'
+" Plug 'pangloss/vim-javascript'
+" Plug 'maxmellon/vim-jsx-pretty'
+" Plug 'leafgarland/typescript-vim'
+" Plug 'peitalin/vim-jsx-typescript'
+" Plug 'ekalinin/Dockerfile.vim'
+" Plug 'tpope/vim-markdown'
+" Plug 'leafOfTree/vim-vue-plugin'
 Plug 'clojure-vim/clojure.vim'
-Plug 'hashivim/vim-terraform' " terraform
+" Plug 'hashivim/vim-terraform' " terraform
 
 if filereadable(expand("~/.plugins.vim.local"))
   source ~/.plugins.vim.local

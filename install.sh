@@ -24,6 +24,7 @@ then
       echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 
       sudo apt-get install -y silversearcher-ag \
+        fd-find \
         playerctl \
         git \
         xclip \

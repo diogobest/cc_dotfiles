@@ -10,6 +10,7 @@ alias du='du -h -d 2'
 alias ll='ls -lGh'
 alias la='ll -a'
 alias ls='ls -Gh'
+alias fd='fd-find'
 
 # vim using
 mvim --version > /dev/null 2>&1

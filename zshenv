@@ -7,6 +7,9 @@ export LC_ALL=$LANG
 export CC_GOOD_COMMAND="🤭"
 export CC_BAD_COMMAND="🧐"
 
+#Use fd with fzf
+export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git'
+
 # ensure dotfiles bin directory is loaded first
 export PATH="$HOME/.bin:/usr/local/sbin:$PATH"
 
