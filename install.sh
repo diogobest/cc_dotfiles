@@ -9,6 +9,7 @@ then
   echo "  - zsh"
   echo "  - rvm"
   echo "  - nodejs"
+  echo "  - bat"
 
   case "$(uname -s)" in
     Linux)
@@ -16,7 +17,7 @@ then
       NODE_VERSION=12
 
       sudo apt-get update
-      sudo apt-get install -y software-properties-common gnupg2
+      sudo apt-get install -y software-properties-common gnupg2 curl
       gpg2 --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
       curl -sSL https://get.rvm.io | bash -s stable --ruby
       curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | sudo -E bash -
