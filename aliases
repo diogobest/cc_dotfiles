@@ -6,6 +6,7 @@ os_family=`echo $(uname) | tr '[:upper:]' '[:lower:]'`
 # Show human friendly numbers and colors
 alias df='df -h'
 alias du='du -h -d 2'
+alias cat='bat'
 
 alias ll='ls -lGh'
 alias la='ll -a'

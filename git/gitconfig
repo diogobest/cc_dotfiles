@@ -85,3 +85,16 @@
   enabled = true
 [include]
   path = ~/.gitconfig.local
+[interactive]
+  diffFilter = delta --color-only
+[delta]
+  navigate = true    # use n and N to move between diff sections
+  line-numbers = true
+
+# delta detects terminal colors automatically; set one of these to
+# disable auto-detection
+# dark = true
+# light = true
+#
+[merge]
+  conflictstyle = zdiff3

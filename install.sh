@@ -38,7 +38,8 @@ then
         libevent-dev \
         ncurses-dev \
         bison \
-        pkg-config
+        pkg-config \
+        bat
       ;;
     Darwin )
       echo "  - vim (macvim)"

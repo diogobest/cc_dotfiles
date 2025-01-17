@@ -81,17 +81,23 @@ endfunction
 inoremap <Tab> <c-r>=InsertTabWrapper()<cr>
 inoremap <S-Tab> <c-n>
 
-function! CloseNerdTree()
-  if g:NERDTree.IsOpen()
-    NERDTreeClose
-  else
-    NERDTreeFind
-  endif
-endfunction
 " ==== NERD tree
 " Open the project tree and expose current file in the nerdtree with Ctrl-\
-command! LocalCloseNerdTree call CloseNerdTree()
-nnoremap <silent> <C-\> :LocalCloseNerdTree<cr>
+" function! CloseNerdTree()
+"   if g:NERDTree.IsOpen()
+"     NERDTreeClose
+"   else
+"     NERDTreeFind
+"   endif
+" endfunction
+" command! LocalCloseNerdTree call CloseNerdTree()
+" nnoremap <silent> <C-\> :LocalCloseNerdTree<cr>
+" ==================================================
+function! CloseTree()
+  :Lex
+endfunction
+command! LocalCloseTree call CloseTree()
+nnoremap <silent> <C-\> :LocalCloseTree<cr>
 
 " Index ctags from any project, including those outside Rails
 map <Leader>ct :!ctags -R .<CR>

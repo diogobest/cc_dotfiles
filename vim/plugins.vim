@@ -6,11 +6,10 @@ call plug#begin('~/.vim/bundle')
 
 " Define bundles via Github repos
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'scrooloose/nerdtree' " file explorer
+" Plug 'scrooloose/nerdtree' " file explorer
 Plug 'junegunn/fzf', { 'do': { -> fzf#install()  }  }
 Plug 'junegunn/fzf.vim'
 Plug 'pbrisbin/vim-mkdir' " create folder if it doesn't exist
-Plug 'scrooloose/syntastic' " syntax checking
 Plug 'thoughtbot/vim-rspec'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-git'
@@ -23,7 +22,6 @@ Plug 'vim-scripts/tComment'
 Plug 'chrisbra/color_highlight'
 Plug 'tmux-plugins/vim-tmux'
 Plug 'vim-airline/vim-airline' " Pretty status bar
-Plug 'vim-airline/vim-airline-themes'
 Plug 'christoomey/vim-tmux-runner'
 Plug 'rking/ag.vim'
 " Plug 'godlygeek/tabular'
