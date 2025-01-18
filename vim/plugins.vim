@@ -21,7 +21,6 @@ Plug 'vim-ruby/vim-ruby'
 Plug 'vim-scripts/tComment'
 Plug 'chrisbra/color_highlight'
 Plug 'tmux-plugins/vim-tmux'
-Plug 'vim-airline/vim-airline' " Pretty status bar
 Plug 'christoomey/vim-tmux-runner'
 Plug 'rking/ag.vim'
 " Plug 'godlygeek/tabular'
@@ -32,11 +31,9 @@ Plug 'NLKNguyen/papercolor-theme'  " default colorscheme
 " Plug 'maxmellon/vim-jsx-pretty'
 " Plug 'leafgarland/typescript-vim'
 " Plug 'peitalin/vim-jsx-typescript'
-" Plug 'ekalinin/Dockerfile.vim'
 " Plug 'tpope/vim-markdown'
 " Plug 'leafOfTree/vim-vue-plugin'
 Plug 'clojure-vim/clojure.vim'
-" Plug 'hashivim/vim-terraform' " terraform
 
 if filereadable(expand("~/.plugins.vim.local"))
   source ~/.plugins.vim.local
