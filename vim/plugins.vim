@@ -29,7 +29,6 @@ Plug 'tpope/vim-repeat'
 Plug 'NLKNguyen/papercolor-theme'  " default colorscheme
 " Plug 'pangloss/vim-javascript'
 " Plug 'maxmellon/vim-jsx-pretty'
-" Plug 'leafgarland/typescript-vim'
 " Plug 'peitalin/vim-jsx-typescript'
 " Plug 'tpope/vim-markdown'
 " Plug 'leafOfTree/vim-vue-plugin'

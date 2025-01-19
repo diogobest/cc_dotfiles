@@ -1,5 +1,5 @@
 " set background=light
-set background=light
+set background=dark
 try
   " let g:PaperColor_Theme_Options = {
   "       \   'theme': {
