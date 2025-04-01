@@ -98,3 +98,15 @@
 #
 [merge]
   conflictstyle = zdiff3
+[init]
+  defaultBranch = main
+[column]
+  ui = auto
+[tag]
+  sort = version:refname
+[fetch]
+  prune = true
+  pruneTags = true
+  all = true
+[commit]
+  verbose = true

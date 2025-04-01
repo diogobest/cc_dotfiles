@@ -5,7 +5,7 @@ then
   echo "Installing Campus Code Dotfiles"
   echo "We'll install:"
   echo "  - tmux"
-  echo "  - silver searcher"
+  echo "  - fzf"
   echo "  - zsh"
   echo "  - rvm"
   echo "  - nodejs"
@@ -24,7 +24,7 @@ then
       curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
       echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 
-      sudo apt-get install -y silversearcher-ag \
+      sudo apt-get install -y fzf \
         fd-find \
         playerctl \
         git \
@@ -33,6 +33,7 @@ then
         zsh \
         dconf-cli \
         vim-gtk3 \
+	neovim \
         nodejs \
         yarn \
         ruby \
@@ -51,18 +52,12 @@ then
       curl -sSL https://get.rvm.io | bash -s stable --ruby
       sudo usermod -a -G rvm `whoami`
       ;;
-    CYGWIN* | MSYS*)
-      echo 'You are using a Windows machine which is not recommended to use with our' \
-           ' dotfiles.'
-      echo 'You can clone our repository and try install it manually.'
-      return
-      ;;
     *)
       echo 'Operational system not recognized, aborting installation'
       return
       ;;
   esac
-  git clone --depth=10 https://github.com/diogobest/cc_dotfiles.git "$HOME/.cc_dotfiles"
+  git clone --depth=10 https://github.com/diogobest/cc_dotfiles.git "$HOME/.config/nvim"
   cd "$HOME/.cc_dotfiles"
   rake install
 else
