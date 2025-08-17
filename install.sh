@@ -22,6 +22,7 @@ then
       curl -sSL https://get.rvm.io | bash -s stable --ruby
       curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | sudo -E bash -
       curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+      curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.2.1
       echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 
       sudo apt-get install -y fzf \
