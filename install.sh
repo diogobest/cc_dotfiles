@@ -34,7 +34,7 @@ then
         zsh \
         dconf-cli \
         vim-gtk3 \
-	neovim \
+        neovim \
         nodejs \
         yarn \
         ruby \

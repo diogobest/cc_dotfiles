@@ -68,6 +68,7 @@
   # the usual default is to push all branches
   default = upstream
 [core]
+  pager = delta
   autocrlf = false
   editor = vim
   excludesfile = ~/.gitignore
@@ -90,6 +91,9 @@
 [delta]
   navigate = true    # use n and N to move between diff sections
   line-numbers = true
+  navigate = true  # use n and N to move between diff sections
+  dark = true      # or light = true, or omit for auto-detection
+  side-by-side = true
 
 # delta detects terminal colors automatically; set one of these to
 # disable auto-detection
