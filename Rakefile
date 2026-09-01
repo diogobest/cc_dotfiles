@@ -16,6 +16,8 @@ task :install do
                            'irb/*'
                          ]))
 
+  install_config_files(Dir.glob(['hypr/*'])) if linux?
+
   install_prereqs
   install_fonts
   install_zsh_syntax_highlighting
@@ -66,6 +68,25 @@ def install_files(files)
     end
 
     run_command %( ln -nfs "#{source}" "#{file}" )
+  end
+end
+
+# Links files into ~/.config/<dir>/<file> instead of ~/.<file>, for apps that
+# expect XDG config paths (e.g. hypr/input.lua for Hyprland/Omarchy).
+def install_config_files(files)
+  files.each do |f|
+    source = "#{ENV['PWD']}/#{f}"
+    target_dir = "#{ENV['HOME']}/.config/#{File.dirname(f)}"
+    target = "#{target_dir}/#{File.basename(f)}"
+
+    run_command %( mkdir -p #{target_dir} )
+
+    if File.exist?(target) && !File.symlink?(target)
+      puts "Moving #{target} to #{target}.bkp"
+      run_command %( mv #{target} #{target}.bkp )
+    end
+
+    run_command %( ln -nfs "#{source}" "#{target}" )
   end
 end
 

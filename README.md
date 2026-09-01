@@ -44,6 +44,16 @@ Type your password to change your default shell to `zsh`
 
 [Tmux Key Mapping](Tmux.md)
 
+### Hyprland (Linux / Omarchy)
+
+`hypr/input.lua` is symlinked to `~/.config/hypr/input.lua` on Linux by
+`rake install`. It sets the keyboard layout to US international with dead keys
+(`kb_layout = "us"`, `kb_variant = "intl"`), so `' " ` ^ ~` compose accented
+characters (press the key, then space, to get the plain character).
+
+Hyprland auto-reloads on save; force it with `hyprctl reload` and check
+`hyprctl configerrors`.
+
 #### It's easy to make your customization
 
 Place your customization in the following files:
