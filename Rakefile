@@ -18,6 +18,12 @@ task :install do
 
   install_config_files(Dir.glob(['hypr/*'])) if linux?
 
+  # tmux >= 3.1 reads ~/.config/tmux/tmux.conf in preference to ~/.tmux.conf, and
+  # nvim only ever reads ~/.config/nvim. Link both so a stale copy at the XDG path
+  # can't shadow this repo.
+  link_config('tmux.conf', 'tmux/tmux.conf')
+  link_config('nvim', 'nvim')
+
   install_prereqs
   install_fonts
   install_zsh_syntax_highlighting
@@ -88,6 +94,22 @@ def install_config_files(files)
 
     run_command %( ln -nfs "#{source}" "#{target}" )
   end
+end
+
+# Links a single file or directory into ~/.config/<target>, for apps that read
+# XDG config paths rather than ~/.<name>.
+def link_config(source_rel, target_rel)
+  source = "#{ENV['PWD']}/#{source_rel}"
+  target = "#{ENV['HOME']}/.config/#{target_rel}"
+
+  run_command %( mkdir -p #{File.dirname(target)} )
+
+  if File.exist?(target) && !File.symlink?(target)
+    puts "Moving #{target} to #{target}.bkp"
+    run_command %( mv #{target} #{target}.bkp )
+  end
+
+  run_command %( ln -nfs "#{source}" "#{target}" )
 end
 
 def install_fonts

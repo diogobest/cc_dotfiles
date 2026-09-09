@@ -58,7 +58,6 @@ then
       return
       ;;
   esac
-  git clone --depth=10 https://github.com/diogobest/cc_dotfiles.git "$HOME/.config/nvim"
   cd "$HOME/.cc_dotfiles"
   rake install
 else
