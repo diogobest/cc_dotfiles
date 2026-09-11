@@ -210,6 +210,17 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Slim templates (Rails views) aren't detected by Neovim out of the box
+vim.filetype.add {
+  extension = { slim = 'slim' },
+}
+
+-- Ruby gems installed with `gem install --user-install` (slim-lint) live outside
+-- the default PATH, so make them reachable from the tools Neovim spawns.
+for _, dir in ipairs(vim.fn.glob(vim.fn.expand '~/.local/share/gem/ruby/*/bin', false, true)) do
+  vim.env.PATH = dir .. ':' .. vim.env.PATH
+end
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -394,16 +405,27 @@ require('lazy').setup({
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
+      local vimgrep_arguments = { unpack(require('telescope.config').values.vimgrep_arguments) }
+      -- Search hidden files/directories too (e.g. `.github`), but never the `.git` internals.
+      -- Files listed in `.gitignore` are still skipped.
+      vim.list_extend(vimgrep_arguments, { '--hidden', '--glob', '!**/.git/*' })
+
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
-        -- pickers = {}
+        defaults = {
+          -- Used by live_grep and grep_string
+          vimgrep_arguments = vimgrep_arguments,
+          --   mappings = {
+          --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+          --   },
+        },
+        pickers = {
+          find_files = {
+            find_command = { 'rg', '--files', '--hidden', '--glob', '!**/.git/*' },
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -676,6 +698,17 @@ require('lazy').setup({
         -- ts_ls = {},
         --
 
+        -- HTML+ERB language server for Rails views: diagnostics and formatting.
+        -- Slim has no language server, see `lint.lua` for slim-lint instead.
+        herb_ls = {
+          settings = {
+            languageServerHerb = {
+              -- Herb ships its formatter opt-in, so turn it on explicitly.
+              formatter = { enabled = true },
+            },
+          },
+        },
+
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -691,6 +724,14 @@ require('lazy').setup({
           },
         },
       }
+
+      -- mason-lspconfig v2 enables servers itself (`automatic_enable`) and ignores
+      -- the `handlers` table below, so the settings above have to be registered
+      -- through vim.lsp.config, which it does respect.
+      vim.lsp.config('*', { capabilities = capabilities })
+      for server_name, server_config in pairs(servers) do
+        vim.lsp.config(server_name, server_config)
+      end
 
       -- Ensure the servers and tools above are installed
       --
@@ -925,7 +966,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'embedded_template', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'ruby', 'slim', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {

@@ -6,12 +6,20 @@ os_family=`echo $(uname) | tr '[:upper:]' '[:lower:]'`
 # Show human friendly numbers and colors
 alias df='df -h'
 alias du='du -h -d 2'
-alias cat='batcat'
+# bat ships as `batcat` on Debian/Ubuntu, `bat` most everywhere else
+if command -v batcat > /dev/null 2>&1; then
+  alias cat='batcat'
+elif command -v bat > /dev/null 2>&1; then
+  alias cat='bat'
+fi
 
 alias ll='ls -lGh'
 alias la='ll -a'
 alias ls='ls -Gh'
-alias fd='fd-find'
+# the fd-find package installs the binary as `fdfind` on Debian/Ubuntu
+if ! command -v fd > /dev/null 2>&1 && command -v fdfind > /dev/null 2>&1; then
+  alias fd='fdfind'
+fi
 
 # vim using
 mvim --version > /dev/null 2>&1
@@ -28,6 +36,7 @@ alias ve='vim $HOME/.vimrc'
 
 # Git Aliases
 alias gs='git status'
+alias gwl='git worktree list'
 
 if [[ $os_family == 'darwin' ]]
 then
@@ -43,7 +52,11 @@ if [[ $os_family == 'linux' ]]
 then
   alias ll='ls -lh --color=auto'
   alias ls='ls --color=auto'
-  alias mykey="cat $HOME/.ssh/id_rsa.pub | xclip -i -selection clipboard"
+  if command -v wl-copy > /dev/null 2>&1; then
+    alias mykey="cat $HOME/.ssh/id_rsa.pub | wl-copy"
+  else
+    alias mykey="cat $HOME/.ssh/id_rsa.pub | xclip -i -selection clipboard"
+  fi
 fi
 
 # your aliases
