@@ -30,7 +30,6 @@ Plug 'rking/ag.vim'
 Plug 'godlygeek/tabular'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-repeat'
-Plug 'github/copilot.vim', { "branch": "release" }
 
 if filereadable(expand("~/.plugins.vim.local"))
   source ~/.plugins.vim.local
