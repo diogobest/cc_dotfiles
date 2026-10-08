@@ -37,6 +37,8 @@ alias ve='vim $HOME/.vimrc'
 # Git Aliases
 alias gs='git status'
 alias gwl='git worktree list'
+alias gclean="git branch --merged | grep  -v '\\*\\|master\\|develop\\|main' | xargs -n 1 -r git branch -d"
+
 
 if [[ $os_family == 'darwin' ]]
 then

@@ -243,6 +243,10 @@ vim.opt.rtp:prepend(lazypath)
 --  To update plugins you can run
 --    :Lazy update
 --
+-- Restore pre-0.12 treesitter query handler semantics for plugins that still
+-- ask for them. Must run before any plugin registers predicates/directives.
+require('custom.ts_compat').setup()
+
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
@@ -405,9 +409,9 @@ require('lazy').setup({
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       local vimgrep_arguments = { unpack(require('telescope.config').values.vimgrep_arguments) }
-      -- Search hidden files/directories too (e.g. `.github`), but never the `.git` internals.
+      -- Search hidden files/directories too (e.g. `.github`), but never the `.git` internals or compiled `public/assets`.
       -- Files listed in `.gitignore` are still skipped.
-      vim.list_extend(vimgrep_arguments, { '--hidden', '--glob', '!**/.git/*' })
+      vim.list_extend(vimgrep_arguments, { '--hidden', '--glob', '!**/.git/*', '--glob', '!**/public/assets/*' })
 
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
@@ -422,7 +426,7 @@ require('lazy').setup({
         },
         pickers = {
           find_files = {
-            find_command = { 'rg', '--files', '--hidden', '--glob', '!**/.git/*' },
+            find_command = { 'rg', '--files', '--hidden', '--glob', '!**/.git/*', '--glob', '!**/public/assets/*' },
           },
         },
         extensions = {

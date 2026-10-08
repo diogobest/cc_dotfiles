@@ -11,6 +11,7 @@
   old = red
   new = green
 [alias]
+  cleanup = "!git branch --merged | grep  -v '\\*\\|master\\|develop\\|main' | xargs -n 1 -r git branch -d"
   # add
   a = add                           # add
   chunkyadd = add --patch           # stage commits chunk by chunk
