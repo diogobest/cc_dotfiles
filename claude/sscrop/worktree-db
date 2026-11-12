@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+# Banco de dados próprio por worktree do SSCROP.
+#
+#   worktree-db create <caminho-da-worktree>   clona o banco de dev da master (reflink/btrfs) e cria um de teste vazio
+#   worktree-db drop   <caminho-da-worktree>   derruba os dois bancos
+#   worktree-db remove <caminho> [--force]     drop + git worktree remove (corrige arquivos root do container)
+#   worktree-db name   <caminho-da-worktree>   só imprime os nomes
+#
+# A worktree aponta para os bancos via DATABASE_URL em .env.development.local / .env.test.local
+# (dotenv-rails carrega cada um só no seu ambiente), então não precisa mexer no database.yml
+# e funciona em qualquer branch, inclusive antigas.
+#
+# Variáveis: WT_DB_CONTAINER (padrão sscrop-db-1), WT_DB_TEMPLATE (padrão: banco de development
+# do database.yml do checkout principal).
+set -uo pipefail
+
+cmd=${1:-}; wt=${2:-}
+[ -n "$cmd" ] && [ -n "$wt" ] || { echo "uso: worktree-db create|drop|name <caminho>" >&2; exit 2; }
+wt=$(cd "$wt" 2>/dev/null && pwd -P) || { echo "worktree-db: caminho inválido: ${2}" >&2; exit 2; }
+
+common=$(git -C "$wt" rev-parse --path-format=absolute --git-common-dir)
+main=$(dirname "$common")
+container=${WT_DB_CONTAINER:-sscrop-db-1}
+
+if [ "$wt" = "$main" ]; then
+  echo "worktree-db: $wt é o checkout principal — nada a fazer" >&2; exit 0
+fi
+
+rel=${wt#"$main"/}; rel=${rel#.worktree/}; rel=${rel#.claude/worktrees/}
+slug=$(printf '%s' "$rel" | tr 'A-Z' 'a-z' | tr -c 'a-z0-9' '_' | sed 's/__*/_/g; s/^_//; s/_$//')
+slug=${slug:0:40}
+dev_db="sscrop_dev_${slug}"
+test_db="sscrop_test_${slug}"
+
+psql() { docker exec -i "$container" psql -U postgres -v ON_ERROR_STOP=1 -Atq "$@"; }
+db_exists() { [ "$(psql -c "select 1 from pg_database where datname='$1'")" = "1" ]; }
+
+case "$cmd" in
+  name)
+    echo "$dev_db $test_db" ;;
+
+  create)
+    template=${WT_DB_TEMPLATE:-$(sed -n '/^development:/,/^[a-z]/s/^ *database: *//p' "$main/config/database.yml" | head -1)}
+    template=${template:-sscrop_development}
+
+    # .env é gitignored e não vem na worktree: herda o da master
+    [ -f "$wt/.env" ] || { [ -f "$main/.env" ] && cp "$main/.env" "$wt/.env"; }
+    printf 'DATABASE_URL=postgres:///%s\n' "$dev_db"  > "$wt/.env.development.local"
+    printf 'DATABASE_URL=postgres:///%s\n' "$test_db" > "$wt/.env.test.local"
+
+    if ! docker inspect -f '{{.State.Running}}' "$container" 2>/dev/null | grep -q true; then
+      echo "⚠ worktree-db: container $container não está rodando — bancos não criados." >&2
+      echo "  Depois rode: $0 create $wt" >&2
+      exit 0
+    fi
+
+    if db_exists "$dev_db"; then
+      echo "✓ $dev_db já existe" >&2
+    else
+      busy=$(psql -c "select count(*) from pg_stat_activity where datname='$template' and pid<>pg_backend_pid()")
+      if [ "$busy" != "0" ]; then
+        echo "⚠ worktree-db: $template tem $busy conexão(ões) abertas (puma/sidekiq/console da master?)." >&2
+        echo "  O CREATE DATABASE ... TEMPLATE exige o banco de origem sem conexões." >&2
+        echo "  Pare o servidor da master e rode: $0 create $wt" >&2
+      else
+        start=$(date +%s)
+        if psql -c "SET file_copy_method = clone" \
+                -c "CREATE DATABASE \"$dev_db\" TEMPLATE \"$template\" STRATEGY = FILE_COPY"; then
+          echo "✓ $dev_db clonado de $template em $(( $(date +%s) - start ))s" >&2
+        else
+          echo "⚠ worktree-db: falha ao clonar $template" >&2
+        fi
+      fi
+    fi
+
+    # Banco de teste vazio: o maintain_test_schema! do rails_helper carrega o schema na 1ª rodada
+    if db_exists "$test_db"; then
+      echo "✓ $test_db já existe" >&2
+    else
+      psql -c "CREATE DATABASE \"$test_db\"" && echo "✓ $test_db criado (schema carrega no 1º rspec)" >&2
+    fi
+    ;;
+
+  drop)
+    psql -c "DROP DATABASE IF EXISTS \"$dev_db\" WITH (FORCE)" \
+         -c "DROP DATABASE IF EXISTS \"$test_db\" WITH (FORCE)" \
+      && echo "✓ bancos $dev_db e $test_db removidos" >&2
+    ;;
+
+  remove)
+    # drop + git worktree remove; arquivos criados pelo container (tmp/, log/) ficam como root
+    # e fazem o remove falhar com "Permission denied" — devolve o dono via container antes
+    bash "$0" drop "$wt"
+    if find "$wt" ! -user "$(id -u)" -print -quit 2>/dev/null | grep -q .; then
+      image=${WT_CHOWN_IMAGE:-sscrop-web}
+      docker run --rm --entrypoint chown -v "$wt:/w" "$image" -R "$(id -u):$(id -g)" /w \
+        && echo "✓ dono dos arquivos do container corrigido" >&2
+    fi
+    shift 2
+    if git -C "$main" worktree list --porcelain | grep -qxF "worktree $wt"; then
+      git -C "$main" worktree remove "$@" "$wt" >&2 || exit 1
+    else
+      # sobra de um remove que falhou no meio: o git já esqueceu a worktree, só resta o diretório
+      rm -rf -- "$wt" && echo "✓ diretório órfão $wt apagado" >&2
+    fi
+    ;;
+
+  *) echo "worktree-db: comando desconhecido: $cmd" >&2; exit 2 ;;
+esac
+exit 0

@@ -12,6 +12,8 @@
   new = green
 [alias]
   cleanup = "!git branch --merged | grep  -v '\\*\\|master\\|develop\\|main' | xargs -n 1 -r git branch -d"
+  # remove a worktree; in repos with .git/hooks/worktree-db (SSCROP) also drops its databases
+  wt-rm = "!f() { p=$(cd \"$1\" && pwd -P) && shift && d=\"$(git rev-parse --path-format=absolute --git-common-dir)/hooks/worktree-db\"; if [ -x \"$d\" ]; then \"$d\" remove \"$p\" \"$@\"; else git worktree remove \"$@\" \"$p\"; fi; }; f"
   # add
   a = add                           # add
   chunkyadd = add --patch           # stage commits chunk by chunk

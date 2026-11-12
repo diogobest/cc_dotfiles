@@ -54,6 +54,22 @@ characters (press the key, then space, to get the plain character).
 Hyprland auto-reloads on save; force it with `hyprctl reload` and check
 `hyprctl configerrors`.
 
+### Claude Code worktrees (+ SSCROP per-worktree database)
+
+`rake install` (or just `rake claude`) links `claude/hooks/*` into `~/.claude/hooks` and
+registers them as the `WorktreeCreate`/`WorktreeRemove` hooks in `~/.claude/settings.json`
+(merged; a `.bkp` of the previous file is kept). They replace Claude Code's default worktree
+creation: `.claude/worktrees/<name>` on branch `worktree-<name>` from `origin/<default>`, with
+`--no-track`.
+
+If SSCROP is cloned at `~/Documents/sscrop` (override with `SSCROP_DIR`), it also links
+`claude/sscrop/worktree-db` and `post-checkout` into its `.git/hooks`. Every new worktree
+(`git worktree add` or Claude) then gets `.worktree/<name>` plus its own databases: dev cloned
+from master's dev database via reflink (`file_copy_method = clone`, `STRATEGY = FILE_COPY`,
+needs Postgres 18 on btrfs/XFS and no open connections on the source), and an empty test database.
+They are wired through `DATABASE_URL` in `.env.development.local` / `.env.test.local`.
+Remove with `git wt-rm <path> [--force]`, which drops the databases too.
+
 #### It's easy to make your customization
 
 Place your customization in the following files:

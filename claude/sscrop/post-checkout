@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# `git worktree add` dispara post-checkout com HEAD anterior = sha nulo: cria o banco da worktree.
+[ "$1" = "0000000000000000000000000000000000000000" ] || exit 0
+[ "$(git rev-parse --absolute-git-dir)" != "$(git rev-parse --path-format=absolute --git-common-dir)" ] || exit 0
+"$(git rev-parse --path-format=absolute --git-common-dir)/hooks/worktree-db" create "$PWD" || true
+exit 0

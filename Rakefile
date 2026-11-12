@@ -24,6 +24,8 @@ task :install do
   link_config('tmux.conf', 'tmux/tmux.conf')
   link_config('nvim', 'nvim')
 
+  Rake::Task[:claude].invoke
+
   install_prereqs
   install_fonts
   install_zsh_syntax_highlighting
@@ -33,7 +35,81 @@ task :install do
   installation_message
 end
 
+desc 'Install Claude Code hooks (WorktreeCreate/WorktreeRemove) and the SSCROP per-worktree database'
+task :claude do
+  install_claude_hooks
+  install_sscrop_worktree_db
+end
+
 private
+
+CLAUDE_WORKTREE_HOOKS = {
+  'WorktreeCreate' => { 'script' => 'worktree-create.sh', 'timeout' => 300,
+                        'statusMessage' => 'Criando worktree e banco...' },
+  'WorktreeRemove' => { 'script' => 'worktree-remove.sh', 'timeout' => 120 }
+}.freeze
+
+def dotfiles_root
+  File.expand_path(__dir__)
+end
+
+# Links claude/hooks/* into ~/.claude/hooks and registers them in ~/.claude/settings.json,
+# merging with whatever is already there (other hooks, permissions, model...).
+def install_claude_hooks
+  require 'json'
+
+  hooks_dir = File.join(ENV['HOME'], '.claude', 'hooks')
+  run_command %( mkdir -p "#{hooks_dir}" )
+  Dir.glob(File.join(dotfiles_root, 'claude', 'hooks', '*')).each do |source|
+    target = File.join(hooks_dir, File.basename(source))
+    if File.exist?(target) && !File.symlink?(target)
+      puts "Moving #{target} to #{target}.bkp"
+      run_command %( mv "#{target}" "#{target}.bkp" )
+    end
+    run_command %( ln -nfs "#{source}" "#{target}" )
+  end
+
+  settings_path = File.join(ENV['HOME'], '.claude', 'settings.json')
+  settings = File.exist?(settings_path) ? JSON.parse(File.read(settings_path)) : {}
+  settings['hooks'] ||= {}
+  CLAUDE_WORKTREE_HOOKS.each do |event, opts|
+    hook = { 'type' => 'command', 'command' => "~/.claude/hooks/#{opts['script']}", 'timeout' => opts['timeout'] }
+    hook['statusMessage'] = opts['statusMessage'] if opts['statusMessage']
+    settings['hooks'][event] = [{ 'hooks' => [hook] }]
+  end
+  run_command %( cp "#{settings_path}" "#{settings_path}.bkp" ) if File.exist?(settings_path)
+  File.write(settings_path, "#{JSON.pretty_generate(settings)}\n")
+  puts "Registered #{CLAUDE_WORKTREE_HOOKS.keys.join(' and ')} in #{settings_path}"
+rescue JSON::ParserError => e
+  puts "Skipping Claude hooks: #{settings_path} is not valid JSON (#{e.message})"
+end
+
+# Per-worktree database for SSCROP: links worktree-db and post-checkout into the repo's
+# .git/hooks (shared by every worktree). Skipped when the repo isn't cloned yet.
+def install_sscrop_worktree_db
+  repo = File.expand_path(ENV.fetch('SSCROP_DIR', '~/Documents/sscrop'))
+  git_dir = File.join(repo, '.git')
+  unless File.directory?(git_dir)
+    puts "SSCROP not found at #{repo} — skipping worktree-db (rerun `rake claude` after cloning, or set SSCROP_DIR)"
+    return
+  end
+
+  %w[worktree-db post-checkout].each do |name|
+    source = File.join(dotfiles_root, 'claude', 'sscrop', name)
+    target = File.join(git_dir, 'hooks', name)
+    if File.exist?(target) && !File.symlink?(target)
+      puts "Moving #{target} to #{target}.bkp"
+      run_command %( mv "#{target}" "#{target}.bkp" )
+    end
+    run_command %( ln -nfs "#{source}" "#{target}" )
+  end
+
+  exclude = File.join(git_dir, 'info', 'exclude')
+  current = File.exist?(exclude) ? File.read(exclude).lines.map(&:chomp) : []
+  missing = %w[.env.development.local .env.test.local] - current
+  File.open(exclude, 'a') { |f| missing.each { |line| f.puts line } } if missing.any?
+  puts "SSCROP worktree-db installed in #{git_dir}/hooks"
+end
 
 def cc_dotfiles_folder
   '$HOME/.cc_dotfiles'
